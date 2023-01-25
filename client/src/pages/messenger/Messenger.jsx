@@ -10,13 +10,13 @@ import { useEffect } from "react";
 import axios from "axios";
 export default function Messenger() {
   const [conversations, setConversations] = useState([]);
-  const [currentChat, setCurrentChat] = useState([]);
+  const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const { user } = useContext(AuthContext);
   useEffect(() => {
     const getConversations = async () => {
       try {
-        const res = await axios.get("/conversations/" + user._id);
+        const res = await axios.get("/conversations/" + user?._id);
         setConversations(res.data);
       } catch (error) {
         console.log(error);
@@ -27,7 +27,7 @@ export default function Messenger() {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        const res = await axios.get("/messages/" + currentChat?._id);
+        const res = await axios.get("/messages/" + currentChat._id);
         setMessages(res);
       } catch (error) {
         console.log(error);
