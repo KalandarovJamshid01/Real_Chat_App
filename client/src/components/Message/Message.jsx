@@ -4,10 +4,14 @@ export default function Message() {
   return (
     <div className="message">
       <div className="messageTop">
-        <img src="" alt="" className="messageImg" />
+        <img
+          src="./../../../public/assets/person/1.jpeg"
+          alt=""
+          className="messageImg"
+        />
         <p className="messageText">Hello this is a message</p>
       </div>
-      <div className="messageBottom"></div>
+      <div className="messageBottom">1 hour ago</div>
     </div>
   );
 }
