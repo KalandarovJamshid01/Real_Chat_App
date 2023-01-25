@@ -24,6 +24,17 @@ export default function Messenger() {
     };
     getConversations();
   }, [user._id]);
+  useEffect(() => {
+    const getMessages = async () => {
+      try {
+        const res = await axios.get("/messages/" + currentChat?._id);
+        setMessages(res);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getMessages();
+  }, [currentChat]);
   return (
     <>
       <Topbar />
@@ -36,29 +47,20 @@ export default function Messenger() {
               className="chatMenuInput"
             />
             {conversations.map((c) => (
-              <Conversations conversation={c} currentUser={user} />
+              <div onClick={() => setCurrentChat(c)}>
+                <Conversations conversation={c} currentUser={user} />
+              </div>
             ))}
           </div>
         </div>
         <div className="chatBox">
           <div className="chatBoxWrapper">
-            {
-              currentChat ? (
+            {currentChat ? (
               <>
                 <div className="chatBoxTop">
-                  <Message />
-                  <Message own={true} />
-                  <Message />
-                  <Message own={true} />
-                  <Message />
-                  <Message own={true} />
-                  <Message />
-                  <Message own={true} />
-                  <Message />
-                  <Message own={true} />
-                  <Message />
-                  <Message own={true} />
-                  <Message />
+                  {messages.map((m) => (
+                    <Message message={m} own={m.sender === user._id} />
+                  ))}
                 </div>
                 <div className="chatBoxBottom">
                   <textarea
