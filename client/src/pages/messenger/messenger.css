@@ -40,7 +40,7 @@
 
 .chatMessageInput {
   width: 80%;
-  height: 90px;
+  height: 40px;
   padding: 10px;
 }
 
@@ -82,11 +82,11 @@
     display: none;
   }
 
-  .chatBox{
+  .chatBox {
     flex: 10;
   }
 
-  .chatOnline{
+  .chatOnline {
     flex: 1px;
   }
 }
