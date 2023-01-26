@@ -3,10 +3,22 @@ import { Search, Person, Chat, Notifications } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-
+import { useState } from "react";
+import { useEffect } from "react";
+import axios from "axios";
 export default function Topbar() {
   const { user } = useContext(AuthContext);
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+
+  const [notify, setNotify] = useState([]);
+
+  useEffect(() => {
+    const getNotify = async () => {
+      const res = await axios.get("/notifies/" + user._id);
+      setNotify(res.data);
+    };
+    getNotify();
+  }, [user._id]);
   return (
     <div className="topbarContainer">
       <div className="topbarLeft">
@@ -31,15 +43,15 @@ export default function Topbar() {
         <div className="topbarIcons">
           <div className="topbarIconItem">
             <Person />
-            <span className="topbarIconBadge">1</span>
+            <span className="topbarIconBadge"></span>
           </div>
           <div className="topbarIconItem">
             <Chat />
-            <span className="topbarIconBadge">2</span>
+            <span className="topbarIconBadge"></span>
           </div>
           <div className="topbarIconItem">
             <Notifications />
-            <span className="topbarIconBadge">1</span>
+            <span className="topbarIconBadge">{notify.length}</span>
           </div>
         </div>
         <Link to={`/profile/${user.username}`}>
