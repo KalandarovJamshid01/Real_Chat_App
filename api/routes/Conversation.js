@@ -1,5 +1,4 @@
 const router = require("express").Router();
-
 const Conversation = require("./../models/Conversation");
 
 router.route("/").post(async (req, res) => {
@@ -14,6 +13,10 @@ router.route("/").post(async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  const conversations = await Conversation.find();
+  res.status(200).json(conversations);
+});
 router.get("/:userId", async (req, res) => {
   try {
     const conversation = await Conversation.find({

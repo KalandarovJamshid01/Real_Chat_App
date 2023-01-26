@@ -8,11 +8,14 @@ import { AuthContext } from "../../context/AuthContext";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
+import { useRef } from "react";
 export default function Messenger() {
   const [conversations, setConversations] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
   const { user } = useContext(AuthContext);
+  const scrollRef = useRef();
   useEffect(() => {
     const getConversations = async () => {
       try {
@@ -28,13 +31,33 @@ export default function Messenger() {
     const getMessages = async () => {
       try {
         const res = await axios.get("/messages/" + currentChat._id);
-        setMessages(res);
+        setMessages(res.data);
       } catch (error) {
         console.log(error);
       }
     };
     getMessages();
   }, [currentChat]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const message = {
+      sender: user._id,
+      text: newMessage,
+      conversation_id: currentChat._id,
+    };
+    try {
+      const res = await axios.post("/messages", message);
+      setMessages([...messages, res.data]);
+      setNewMessage("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behaviour: "smooth" });
+  }, [messages]);
+
   return (
     <>
       <Topbar />
@@ -59,15 +82,20 @@ export default function Messenger() {
               <>
                 <div className="chatBoxTop">
                   {messages.map((m) => (
-                    <Message message={m} own={m.sender === user._id} />
+                    <div ref={scrollRef}>
+                      <Message message={m} own={m.sender === user._id} />
+                    </div>
                   ))}
                 </div>
                 <div className="chatBoxBottom">
                   <textarea
                     className="chatMessageInput"
                     placeholder="Write something..."
+                    onChange={(e) => setNewMessage(e.target.value)}
                   ></textarea>
-                  <button className="chatSubmitButton">Send</button>
+                  <button className="chatSubmitButton" onClick={handleSubmit}>
+                    Send
+                  </button>
                 </div>
               </>
             ) : (
