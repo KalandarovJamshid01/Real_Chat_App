@@ -11,6 +11,15 @@ export default function Test() {
   const [newMessage, setNewMessage] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const { user } = useContext(AuthContext);
+  const [notifyNumber, setNotifyNumber] = useState([]);
+  useEffect(() => {
+    const getNotifyNumber = async () => {
+      const res = await axios.get("/notifies/" + user._id);
+      setNotifyNumber(res.data);
+    };
+    getNotifyNumber();
+  }, [user._id]);
+  console.log(notifyNumber);
   const socket = useRef(io("ws://localhost:8900"));
   useEffect(() => {
     socket.current = io("ws://localhost:8900");
@@ -31,11 +40,16 @@ export default function Test() {
       text: newMessage,
     };
     const res = await axios.post("/notifies", notify);
+
+    socket.current.emit("sendMessage", {
+      receiverId: "63d16a254d7d234e80d0f1d5",
+      text: newMessage,
+    });
     console.log(res);
   };
   return (
     <>
-      <Topbar />
+      <Topbar notifyNumber={notifyNumber} />
       <div className="test">
         <div className="testWrapper">
           <input

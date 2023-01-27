@@ -6,18 +6,9 @@ import { AuthContext } from "../../context/AuthContext";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
-export default function Topbar() {
-  const { user } = useContext(AuthContext);
+export default function Topbar({ notifyNumber }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-
-  const [notify, setNotify] = useState([]);
-  useEffect(() => {
-    const getNotify = async () => {
-      const res = await axios.get("/notifies/" + user._id);
-      setNotify(res.data);
-    };
-    getNotify();
-  }, [user._id]);
+  const { user } = useContext(AuthContext);
   return (
     <div className="topbarContainer">
       <div className="topbarLeft">
@@ -31,7 +22,6 @@ export default function Topbar() {
           <input
             placeholder="Search for friend, post or video"
             className="searchInput"
-            
           />
         </div>
       </div>
@@ -51,7 +41,8 @@ export default function Topbar() {
           </div>
           <div className="topbarIconItem">
             <Notifications />
-            <span className="topbarIconBadge">{notify.length}</span>
+            <span className="topbarIconBadge">{notifyNumber}</span>
+            {console.log(notifyNumber)}
           </div>
         </div>
         <Link to={`/profile/${user.username}`}>
