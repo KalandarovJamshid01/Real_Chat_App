@@ -93,7 +93,7 @@ export default function Messenger() {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behaviour: "smooth" });
   }, [messages]);
-
+  console.log(currentChat);
   return (
     <>
       <Topbar />

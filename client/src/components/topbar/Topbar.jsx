@@ -11,7 +11,6 @@ export default function Topbar() {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
   const [notify, setNotify] = useState([]);
-
   useEffect(() => {
     const getNotify = async () => {
       const res = await axios.get("/notifies/" + user._id);
@@ -32,6 +31,7 @@ export default function Topbar() {
           <input
             placeholder="Search for friend, post or video"
             className="searchInput"
+            
           />
         </div>
       </div>

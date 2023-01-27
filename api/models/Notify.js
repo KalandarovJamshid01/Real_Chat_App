@@ -4,6 +4,10 @@ const notifySchema = mongoose.Schema(
     userId: String,
     documentId: String,
     text: String,
+    view: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
