@@ -1,4 +1,3 @@
-const { remove } = require("../api/models/Message");
 
 const io = require("socket.io")(8900, {
   cors: {
@@ -16,7 +15,8 @@ const removeUser = (socketId) => {
 };
 
 const getUser = (userId) => {
-  return users.find((user) => user.userId === userId);
+  let user = users.find((user) => user.userId === userId);
+  return user;
 };
 
 io.on("connection", (socket) => {
@@ -36,10 +36,10 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("sendNotify", ({}) => {
+  socket.on("sendNotify", ({ receiverId, text }) => {
     const user = getUser(receiverId);
-    io.to(user.socketId).emit("getNotify", {
-      senderId,
+    console.log(user.socketId);
+    io.to(user?.socketId).emit("getNotify", {
       text,
     });
   });

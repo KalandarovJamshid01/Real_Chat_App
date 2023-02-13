@@ -9,28 +9,27 @@ import { useRef } from "react";
 import { io } from "socket.io-client";
 export default function Test() {
   const [newMessage, setNewMessage] = useState("");
-  const [arrivalMessage, setArrivalMessage] = useState(null);
   const { user } = useContext(AuthContext);
-  const [notifyNumber, setNotifyNumber] = useState([]);
-  useEffect(() => {
-    const getNotifyNumber = async () => {
-      const res = await axios.get("/notifies/" + user._id);
-      setNotifyNumber(res.data);
-    };
-    getNotifyNumber();
-  }, [user._id]);
-  console.log(notifyNumber);
+  const [notifyNumberSocket, setNotifyNumberSocket] = useState(false);
+
   const socket = useRef(io("ws://localhost:8900"));
   useEffect(() => {
     socket.current = io("ws://localhost:8900");
-    socket.current.on("getMessage", (data) => {
-      setArrivalMessage({
-        sender: data.senderId,
-        text: data.text,
-        createdAt: Date.now(),
-      });
+    console.log(socket);
+    socket.current.on("getNotify", (data) => {
+      console.log(data);
+      setNotifyNumberSocket(true);
     });
   }, []);
+
+  useEffect(() => {
+    socket.current.emit("addUser", user._id);
+    socket.current.on("getUsers", (users) => {
+      console.log(users);
+    });
+  }, [user]);
+
+  console.log(notifyNumberSocket);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,7 +40,7 @@ export default function Test() {
     };
     const res = await axios.post("/notifies", notify);
 
-    socket.current.emit("sendMessage", {
+    socket.current.emit("sendNotify", {
       receiverId: "63d16a254d7d234e80d0f1d5",
       text: newMessage,
     });
@@ -49,7 +48,7 @@ export default function Test() {
   };
   return (
     <>
-      <Topbar notifyNumber={notifyNumber} />
+      <Topbar notifyNumberSocket={notifyNumberSocket} />
       <div className="test">
         <div className="testWrapper">
           <input

@@ -6,9 +6,20 @@ import { AuthContext } from "../../context/AuthContext";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
-export default function Topbar({ notifyNumber }) {
+export default function Topbar({ notifyNumberSocket }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+
   const { user } = useContext(AuthContext);
+
+  const [notifyNumber, setNotifyNumber] = useState([]);
+  useEffect(() => {
+    const getNotifyNumber = async () => {
+      const res = await axios.get("/notifies/" + user._id);
+      setNotifyNumber(res.data);
+    };
+    getNotifyNumber();
+  }, [user._id]);
+  console.log(notifyNumberSocket);
   return (
     <div className="topbarContainer">
       <div className="topbarLeft">
@@ -41,8 +52,9 @@ export default function Topbar({ notifyNumber }) {
           </div>
           <div className="topbarIconItem">
             <Notifications />
-            <span className="topbarIconBadge">{notifyNumber}</span>
-            {console.log(notifyNumber)}
+            <span className="topbarIconBadge">
+              {notifyNumberSocket ? notifyNumber.length : notifyNumber.length++}
+            </span>
           </div>
         </div>
         <Link to={`/profile/${user.username}`}>
